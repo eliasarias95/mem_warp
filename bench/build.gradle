@@ -3,7 +3,7 @@ apply plugin: 'java'
 defaultTasks 'compileJava','jar'
 
 description = "Data rotation using SDW"
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 
 sourceSets {
   main {

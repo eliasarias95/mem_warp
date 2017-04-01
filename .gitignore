@@ -9,6 +9,5 @@ build/
 *.iml
 *.zip
 *.swp
-*.class
 *.DS_Store
 /bin/
