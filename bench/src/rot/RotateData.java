@@ -16,7 +16,12 @@ import javax.swing.*;
  */
 public class RotateData {
 
-  public static float[][] rotateData(float[][] ref, float[][] rot) {
+  /**
+  public RotateData() {
+    
+  }
+
+  public static float[][] computeShifts(float[][] ref, float[][] rot) {
     int n1 = ref[0].length;
     int n2 = ref.length;
     Sampling s1 = new Sampling(n1);
@@ -26,6 +31,24 @@ public class RotateData {
     double sub_samp1 = 10.0; // bigger = more smooth
     double sub_samp2 = 5.0; // smaller = less smooth
     double str1 = 0.2; // strain in 1st dim
+    double str2 = 0.7; // strain in 2nd dim
+    DynamicWarpingK dwk = new DynamicWarpingK(k,-pmax,pmax,s1,s2);
+    dwk.setSmoothness(sub_samp1,sub_samp2);
+    dwk.setStrainLimits(-str1,str1,-str2,str2);
+    float[][] shifts = dwk.findShifts(s1,ref,s1,rot);
+  }
+  */
+
+  public static float[][] rotateData(float[][] ref, float[][] rot) {
+    int n1 = ref[0].length;
+    int n2 = ref.length;
+    Sampling s1 = new Sampling(n1);
+    Sampling s2 = new Sampling(n2);
+    int k = 10; // shift sampling interval 1/k
+    double pmax = 6.0; // max shift allowed
+    double sub_samp1 = 50.0; // bigger = more smooth
+    double sub_samp2 = 20.0; // smaller = less smooth
+    double str1 = 0.3; // strain in 1st dim
     double str2 = 0.7; // strain in 2nd dim
     DynamicWarpingK dwk = new DynamicWarpingK(k,-pmax,pmax,s1,s2);
     dwk.setSmoothness(sub_samp1,sub_samp2);
@@ -54,12 +77,13 @@ public class RotateData {
         float[][] data12 = Utility.readL(n1,n2,
           "/Users/earias/home/git/mem_warp/bench/data/eliasData12.rsf@");
 
-        float[][] rotatedData = rotateData(data0,data12);
+        float[][] rotatedData = rotateData(data12,data0);
 
         float cmin = -1.5e-5f;
         float cmax = 1.5e-5f;
         Plot.plot(s1,s2,data0,"Data rotated 0 degrees","Amplitude",
           cmin,cmax,false);
+
         try {
           Thread.sleep(1000);
         } catch(Exception e) {
