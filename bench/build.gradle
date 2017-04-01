@@ -3,7 +3,7 @@ apply plugin: 'java'
 defaultTasks 'compileJava','jar'
 
 description = "Data rotation using SDW"
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 sourceSets {
   main {
@@ -25,7 +25,5 @@ jar {
 
 repositories.mavenCentral() // for Scala jars
 dependencies {
-  compile fileTree('../../jtk/core/build/libs') // for edu-mines-jtk-1.0.0.jar
-  compile fileTree('../../jtk/core/build/deps') // for dependency jars
-  compile fileTree('../../idh/bench/build/libs') // idh jar
+  compile fileTree('build/deps') // for dependency jars
 }
