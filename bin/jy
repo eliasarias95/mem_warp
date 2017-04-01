@@ -1,0 +1,34 @@
+#!/bin/sh
+
+export MINES_JTK_HOME=$HOME/home/git/jtk
+export EA_HOME=$HOME/home/git/ea
+export SV_HOME=$HOME/home/git/stereo_vision
+export GP605_HOME=$HOME/Documents/classes/gp605/code
+export IDH_HOME=$HOME/home/git/idh
+
+# If Mac OS X, which version of Java should we use?
+export JAVA_VERSION=1.7.0
+
+# Where will Java look for classes? 
+# Add other jars to this list as necessary.
+export CLASSPATH=\
+$MINES_JTK_HOME/core/build/libs/edu-mines-jtk-1.0.0.jar:\
+$MINES_JTK_HOME/core/build/deps/*:\
+$EA_HOME/bench/build/classes:\
+$EA_HOME/bench/build/libs/ea.jar:\
+$SV_HOME/bench/build/classes:\
+$SV_HOME/bench/build/libs/stereovision.jar:\
+$GP605_HOME/bench/build/classes:\
+$GP605_HOME/bench/build/libs/gp605.jar:\
+$IDH_HOME/bench/build/classes:\
+$IDH_HOME/bench/build/libs/idh.jar:\
+.
+
+# Run a server 64-bit VM with assertions enabled and a 10GB max Java heap.
+# Modify these flags and properties as necessary for your system.
+java -server -d64 -ea -Xmx10g \
+-Djava.library.path=$JAVA_LIBRARY_PATH \
+-Djava.util.logging.config.file=$HOME/.java_logging_config \
+-Dpython.cachedir.skip=false \
+-Dpython.cachedir=/tmp/cachedir \
+org.python.util.jython $*

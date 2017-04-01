@@ -1,0 +1,31 @@
+apply plugin: 'java'
+
+defaultTasks 'compileJava','jar'
+
+description = "Data rotation using SDW"
+sourceCompatibility = 1.7
+
+sourceSets {
+  main {
+    output.classesDir = 'build/classes'
+    output.resourcesDir = output.classesDir
+    java {
+      srcDir 'src'
+      exclude '**/new/**','**/old/**'
+    }
+  }
+}
+
+jar {
+  baseName 'rotdat'
+  manifest {
+    attributes 'Implementation-Title': project.description
+  }
+}
+
+repositories.mavenCentral() // for Scala jars
+dependencies {
+  compile fileTree('../../jtk/core/build/libs') // for edu-mines-jtk-1.0.0.jar
+  compile fileTree('../../jtk/core/build/deps') // for dependency jars
+  compile fileTree('../../idh/bench/build/libs') // idh jar
+}
