@@ -56,8 +56,8 @@ public class Plot {
     //pp.setHLabel("Width");
     //pp.setVLabel("Height");
     pp.addColorBar(cbl);
-    pp.setColorBarFormat("%1.5G");
-    pp.setColorBarWidthMinimum(100);
+    pp.setColorBarFormat("%1.3G");
+    pp.setColorBarWidthMinimum(120);
     pp.setTitle(title);
     PlotFrame pf = new PlotFrame(pp);
     pf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

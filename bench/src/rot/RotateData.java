@@ -16,71 +16,66 @@ import javax.swing.*;
  */
 public class RotateData {
 
-  /**
-  public RotateData() {
-    
+  private DynamicWarpingK _dwk;
+  private Sampling _s1, _s2;
+
+  public RotateData(int k, Sampling s1, Sampling s2, double shift_max, 
+      double sub_samp1, double sub_samp2, double strain1, double strain2) {
+    _s1 = s1;
+    _s2 = s2;
+    _dwk = new DynamicWarpingK(k,-shift_max,shift_max,s1,s2);
+    _dwk.setSmoothness(sub_samp1,sub_samp2);
+    _dwk.setStrainLimits(-strain1,strain1,-strain2,strain2);
   }
 
-  public static float[][] computeShifts(float[][] ref, float[][] rot) {
-    int n1 = ref[0].length;
-    int n2 = ref.length;
-    Sampling s1 = new Sampling(n1);
-    Sampling s2 = new Sampling(n2);
-    int k = 20; // shift sampling interval 1/k
-    double pmax = 6.0; // max shift allowed
-    double sub_samp1 = 10.0; // bigger = more smooth
-    double sub_samp2 = 5.0; // smaller = less smooth
-    double str1 = 0.2; // strain in 1st dim
-    double str2 = 0.7; // strain in 2nd dim
-    DynamicWarpingK dwk = new DynamicWarpingK(k,-pmax,pmax,s1,s2);
-    dwk.setSmoothness(sub_samp1,sub_samp2);
-    dwk.setStrainLimits(-str1,str1,-str2,str2);
-    float[][] shifts = dwk.findShifts(s1,ref,s1,rot);
+  public float[][] computeShifts(float[][] ref, float[][] rot) {
+    float[][] shifts = _dwk.findShifts(_s1,ref,_s1,rot);
+    return shifts;
   }
-  */
 
-  public static float[][] rotateData(float[][] ref, float[][] rot) {
-    int n1 = ref[0].length;
-    int n2 = ref.length;
-    Sampling s1 = new Sampling(n1);
-    Sampling s2 = new Sampling(n2);
-    int k = 10; // shift sampling interval 1/k
-    double pmax = 6.0; // max shift allowed
-    double sub_samp1 = 50.0; // bigger = more smooth
-    double sub_samp2 = 20.0; // smaller = less smooth
-    double str1 = 0.3; // strain in 1st dim
-    double str2 = 0.7; // strain in 2nd dim
-    DynamicWarpingK dwk = new DynamicWarpingK(k,-pmax,pmax,s1,s2);
-    dwk.setSmoothness(sub_samp1,sub_samp2);
-    dwk.setStrainLimits(-str1,str1,-str2,str2);
-    float[][] shifts = dwk.findShifts(s1,ref,s1,rot);
-    float[][] rotatedData = dwk.applyShifts(s1,rot,shifts);
+  public float[][] rotateData(float[][] rot, float[][] shifts) {
+    float[][] rotatedData = _dwk.applyShifts(_s1,rot,shifts);
     return rotatedData;
   }
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {     
+        // Data dimensions
         int n1 = 1800;
         double d1 = 0.0006;
         double f1 = 0.0;
+        Sampling s1 = new Sampling(n1,d1,f1);
 
         int n2 = 601;
         double d2 = 0.005;
         double f2 = -1.5;
-        //Sampling s1 = new Sampling(n1,d1,f1);
-        //Sampling s2 = new Sampling(n2,d2,f2);
-        Sampling s1 = new Sampling(n1);
-        Sampling s2 = new Sampling(n2);
+        Sampling s2 = new Sampling(n2,d2,f2);
+
+        // Read data in
         float[][] data0 = Utility.readL(n1,n2,
           "/Users/earias/home/git/mem_warp/bench/data/eliasData0.rsf@");
         float[][] data12 = Utility.readL(n1,n2,
           "/Users/earias/home/git/mem_warp/bench/data/eliasData12.rsf@");
 
-        float[][] rotatedData = rotateData(data12,data0);
+        // Create RotateData object to fins shifts and rotate the data
+        int k = 5; // shift sampling interval 1/k
+        double shift_max = 6.0; // max shift allowed
+        double sub_samp1 = 10.0; // bigger = more smooth
+        double sub_samp2 = 5.0; // smaller = less smooth
+        double strain1 = 0.1; // strain in 1st dim
+        double strain2 = 0.1; // strain in 2nd dim
 
-        float cmin = -1.5e-5f;
-        float cmax = 1.5e-5f;
+        Sampling ss1 = new Sampling(n1);
+        Sampling ss2 = new Sampling(n2);
+        RotateData rd = new RotateData(k,ss1,ss2,shift_max,sub_samp1,sub_samp2,
+            strain1,strain2);
+        float[][] shifts = rd.computeShifts(data12,data0);
+        float[][] rotatedData = rd.rotateData(data0,shifts);
+
+        // Plotting
+        float cmin = -1.5e-5f; // min value on colorbar
+        float cmax =  1.5e-5f; // max value on colorbar
         Plot.plot(s1,s2,data0,"Data rotated 0 degrees","Amplitude",
           cmin,cmax,false);
 
@@ -92,8 +87,10 @@ public class RotateData {
 
         Plot.plot(s1,s2,data12,"Data rotated 12 degrees","Amplitude",
             cmin,cmax,false);
-        Plot.plot(s1,s2,rotatedData,"RotatedData","Amplitude",
+        Plot.plot(s1,s2,rotatedData,"Rotated Data","Amplitude",
             cmin,cmax,false);
+        Plot.plot(ss1,ss2,shifts,"Computed shifts","Shifts (samples/sample)",
+            -6.0f,6.0f,true);
       }
     });
   }
