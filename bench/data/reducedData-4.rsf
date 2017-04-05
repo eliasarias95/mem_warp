@@ -1,0 +1,201 @@
+1.8-svn	sfspike	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	o1=0
+	label1="Time"
+	data_format="native_float"
+	esize=4
+	in="stdout"
+	unit1="s"
+	d1=0.0006
+	n1=1800
+	in="stdin"
+
+1.8-svn	sfpad	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	end1=1800
+	data_format="native_float"
+	esize=4
+	in="stdout"
+	n1=3600
+	in="stdin"
+
+1.8-svn	sfricker1	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	data_format="native_float"
+	esize=4
+	in="stdout"
+	in="stdin"
+
+1.8-svn	sfwindow	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	o1=0
+	label1="Time"
+	data_format="native_float"
+	esize=4
+	in="stdout"
+	unit1="s"
+	d1=0.0006
+	n1=1800
+	in="stdin"
+
+1.8-svn	sfscale	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	data_format="native_float"
+	esize=4
+	in="stdout"
+	in="stdin"
+
+1.8-svn	sfput	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	data_format="native_float"
+	in="/Users/aaron/Madagascar/SCRATCH/aaron/Documents/MemEff_Imaging/temp_wavelet.rsf@"
+	label1=t
+1.8-svn	sftransp	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	d2=0.0006
+	n2=1800
+	o2=0
+	data_format="native_float"
+	label2="t"
+	esize=4
+	in="/Users/aaron/Madagascar/SCRATCH/aaron/Documents/MemEff_Imaging/wavelet.rsf@"
+	unit2="s"
+	n1=1
+1.8-svn	sfspray	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	d2=0.0006
+	n2=1
+	o1=0
+	d3=0.0006
+	n3=1800
+	o2=0
+	data_format="native_float"
+	n4=1
+	o3=0
+	label2="t"
+	label3="t"
+	esize=4
+	in="stdout"
+	unit2="s"
+	unit3="s"
+	d1=0.005
+	n1=601
+	in="stdin"
+
+1.8-svn	sfwindow	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	d2=0.0006
+	n2=1800
+	o1=0
+	d3=0.0006
+	n3=1
+	o2=0
+	label1="t"
+	data_format="native_float"
+	o3=0
+	label2="t"
+	label3="t"
+	esize=4
+	in="stdout"
+	squeeze=y
+	unit1="s"
+	unit2="s"
+	unit3="s"
+	d1=0.005
+	n1=601
+	in="stdin"
+
+1.8-svn	sfcostaper	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:54:47 2017
+
+	data_format="native_float"
+	esize=4
+	in="/Users/aaron/Madagascar/SCRATCH/aaron/Documents/MemEff_Imaging/pw_size.rsf@"
+1.8-svn	waveletArray.py	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:55:12 2017
+
+	d2=0.0006
+	n2=1800
+	o1=0
+	o2=0
+	data_format="native_float"
+	esize=4
+	in="/Users/aaron/Madagascar/SCRATCH/aaron/Documents/MemEff_Imaging/pw-4.rsf@"
+	d1=0.005
+	n1=601
+1.8-svn	sftransp	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:55:12 2017
+
+	o1=0
+	d2=0.005
+	n2=601
+	label1="t"
+	o2=0
+	data_format="native_float"
+	label2="t"
+	esize=4
+	in="stdout"
+	unit1="s"
+	unit2="s"
+	d1=0.0006
+	n1=1800
+	in="stdin"
+
+1.8-svn	sfricker1	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:55:12 2017
+
+	data_format="native_float"
+	esize=4
+	in="stdout"
+	in="stdin"
+
+1.8-svn	sfscale	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:55:12 2017
+
+	data_format="native_float"
+	esize=4
+	in="stdout"
+	in="stdin"
+
+1.8-svn	sftransp	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:55:12 2017
+
+	o1=0
+	d2=0.0006
+	n2=1800
+	label1="t"
+	o2=0
+	data_format="native_float"
+	label2="t"
+	esize=4
+	in="stdout"
+	unit1="s"
+	unit2="s"
+	d1=0.005
+	n1=601
+	in="stdin"
+
+1.8-svn	sfcostaper	aaron/Documents/MemEff_Imaging:	aaron@Aarons-MacBook-Pro.local	Thu Mar  2 14:55:12 2017
+
+	data_format="native_float"
+	esize=4
+	in="/Users/aaron/Madagascar/SCRATCH/aaron/Documents/MemEff_Imaging/planewave-4.rsf@"
+1.8-svn	sfawefd2d	aaron/Documents/MemEff_Imaging:	aaron@android-6940e23b9e1707b.wireless.mines.edu	Fri Mar  3 12:17:33 2017
+
+	d2=0.0006
+	n2=1800
+	o1=-1.5
+	o2=0
+	label1="r"
+	data_format="native_float"
+	label2="t"
+	esize=4
+	in="/Users/aaron/Madagascar/SCRATCH/aaron/Documents/MemEff_Imaging/data-4.rsf@"
+	unit1=""
+	unit2="s"
+	d1=0.005
+	n1=601
+1.8-svn	sfmath	aaron/Documents/MemEff_Imaging:	aaron@android-6940e23b9e1707b.wireless.mines.edu	Fri Mar  3 12:24:23 2017
+
+	x2=4
+	d=2
+	input=0
+	data_format="native_float"
+	r=1
+	esize=4
+	in="/Users/aaron/Madagascar/SCRATCH/aaron/Documents/MemEff_Imaging/reducedData-4.rsf@"
+	x1=3
