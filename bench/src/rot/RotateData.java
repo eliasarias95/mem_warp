@@ -16,6 +16,10 @@ import javax.swing.*;
  */
 public class RotateData {
 
+  //static {
+  //  System.loadLibrary("jrsf");
+  //}
+
   private DynamicWarpingK _dwk;
   private Sampling _s1, _s2;
 
@@ -38,6 +42,19 @@ public class RotateData {
     return rotatedData;
   }
 
+  public static void transpose(String filename, float[][] x) {
+    int n1 = x[0].length;
+    int n2 = x.length;
+    float[][] y = new float[n1][n2];
+    for (int i2=0; i2<n2; ++i2) {
+      for (int i1=0; i1<n1; ++i1) {
+        y[i1][i2] = x[i2][i1];
+      }
+    }
+    Utility.writeL(y,
+        "/Users/earias/home/git/mem_warp/bench/data/"+filename);
+  }
+
   public static void main(String[] args) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {     
@@ -58,6 +75,14 @@ public class RotateData {
         float[][] data12 = Utility.readL(n1,n2,
           "/Users/earias/home/git/mem_warp/bench/data/eliasData12.rsf@");
 
+        for (int i=-12; i<13; i+=2) {
+          float[][] fata = Utility.readL(n2,n1,
+            "/Users/earias/home/git/mem_warp/bench/data/reducedData"+i+".rsf@");
+          transpose("eliasData"+i+".rsf@",fata);
+          //float[][] data = Utility.readL(n1,n2,
+          // "/Users/earias/home/git/mem_warp/bench/data/eliasData"+i+".rsf@");
+        }
+
         // Create RotateData object to fins shifts and rotate the data
         int k = 5; // shift sampling interval 1/k
         double shift_max = 6.0; // max shift allowed
@@ -70,27 +95,36 @@ public class RotateData {
         Sampling ss2 = new Sampling(n2);
         RotateData rd = new RotateData(k,ss1,ss2,shift_max,sub_samp1,sub_samp2,
             strain1,strain2);
-        float[][] shifts = rd.computeShifts(data12,data0);
-        float[][] rotatedData = rd.rotateData(data0,shifts);
 
-        // Plotting
-        float cmin = -1.5e-5f; // min value on colorbar
-        float cmax =  1.5e-5f; // max value on colorbar
-        Plot.plot(s1,s2,data0,"Data rotated 0 degrees","Amplitude",
-          cmin,cmax,false);
-
-        try {
-          Thread.sleep(1000);
-        } catch(Exception e) {
-          System.out.println("Oops");
+        for (int i=-12; i<13; i+=2) {
+          float[][] data = Utility.readL(n1,n2,
+            "/Users/earias/home/git/mem_warp/bench/data/eliasData"+i+".rsf@");
+          float[][] shifts = rd.computeShifts(data,data0);
+          float[][] rotatedData = rd.rotateData(data0,shifts);
+          transpose("rotatedData"+i+".rsf@",rotatedData);
         }
+        
+        // Plotting
+        /*
+         * Potentially stuf to be deleted
+         float cmin = -1.5e-5f; // min value on colorbar
+         float cmax =  1.5e-5f; // max value on colorbar
+         Plot.plot(s1,s2,data0,"Data rotated 0 degrees","Amplitude",
+         cmin,cmax,false);
 
-        Plot.plot(s1,s2,data12,"Data rotated 12 degrees","Amplitude",
-            cmin,cmax,false);
-        Plot.plot(s1,s2,rotatedData,"Rotated Data","Amplitude",
-            cmin,cmax,false);
-        Plot.plot(ss1,ss2,shifts,"Computed shifts","Shifts (samples/sample)",
-            -6.0f,6.0f,true);
+         try {
+         Thread.sleep(1000);
+         } catch(Exception e) {
+         System.out.println("Oops");
+         }
+
+         Plot.plot(s1,s2,data12,"Data rotated 10 degrees","Amplitude",
+         cmin,cmax,false);
+         Plot.plot(s1,s2,rotatedData,"Rotated Data","Amplitude",
+         cmin,cmax,false);
+         Plot.plot(ss1,ss2,shifts,"Computed shifts","Shifts (samples/sample)",
+         -6.0f,6.0f,true);
+         */
       }
     });
   }
