@@ -21,16 +21,18 @@ public class RotateData {
   private DynamicWarpingK _dwkT, _dwkS;
   private Sampling _s1, _s2;
 
-  public RotateData(int k, Sampling s1, Sampling s2, double shift_max, 
-      double sub_samp1, double sub_samp2, double strain1, double strain2) {
+  public RotateData(
+      int k, Sampling s1, Sampling s2, double shift_min, double shift_max, 
+      double sub_samp1, double sub_samp2, double strain1min, double strain1max,
+      double strain2min, double strain2max) {
     _s1 = s1;
     _s2 = s2;
-    _dwkT = new DynamicWarpingK(k,-shift_max,shift_max,s1,s2);
+    _dwkT = new DynamicWarpingK(k,shift_min,shift_max,s1,s2);
     _dwkT.setSmoothness(sub_samp1,sub_samp2);
-    _dwkT.setStrainLimits(-strain1,strain1,-strain2,strain2);
-    _dwkS = new DynamicWarpingK(k,-shift_max,shift_max,s2,s1);
+    _dwkT.setStrainLimits(strain1min,strain1max,strain2min,strain2max);
+    _dwkS = new DynamicWarpingK(k,shift_min,shift_max,s2,s1);
     _dwkS.setSmoothness(sub_samp2,sub_samp1);
-    _dwkS.setStrainLimits(-strain2,strain2,-strain1,strain1);
+    _dwkS.setStrainLimits(strain2min,strain2max,strain1min,strain1max);
   }
 
   public float[][] computeTimeShifts(float[][] ref, float[][] rot) {
@@ -45,9 +47,15 @@ public class RotateData {
     return shifts;
   }
 
-  public float[][] warpData(float[][] rot, float[][] shifts) {
-    float[][] rotatedData = _dwkT.applyShifts(_s1,rot,shifts);
-    return rotatedData;
+  public float[][] warpDataT(float[][] data, float[][] shifts) {
+    float[][] warpedData = _dwkT.applyShifts(_s1,data,shifts);
+    return warpedData;
+  }
+
+  public float[][] warpDataS(float[][] data, float[][] shifts) {
+    float[][] dataT = transpose(data);
+    float[][] warpedData = _dwkS.applyShifts(_s2,dataT,shifts);
+    return warpedData;
   }
 
   public static float[][] transpose(float[][] x) {
@@ -78,16 +86,21 @@ public class RotateData {
 
         // Create RotateData object to fins shifts and rotate the data
         int k = 5; // shift sampling interval 1/k
-        double shift_max = 5.0; // max shift allowed
-        double sub_samp1 = 100.0; // bigger = more smooth
-        double sub_samp2 = 30.0; // smaller = less smooth
-        double strain1 = 0.4; // strain in 1st dim
-        double strain2 = 0.7; // strain in 2nd dim
+        double shift_min = -5.0; // max shift allowed
+        double shift_max =  5.0; // max shift allowed
+
+        double sub_samp1 = 200.0; // bigger = more smooth
+        double sub_samp2 = 60.0; // smaller = less smooth
+
+        double strain1min = -0.2; // min strain in 1st dim
+        double strain2min = -0.3; // min strain in 2nd dim
+        double strain1max = 0.2; // max strain in 1st dim
+        double strain2max = 0.3; // max strain in 2nd dim
 
         Sampling ss1 = new Sampling(n1);
         Sampling ss2 = new Sampling(n2);
-        RotateData rd = new RotateData(k,ss1,ss2,shift_max,sub_samp1,sub_samp2,
-            strain1,strain2);
+        RotateData rd = new RotateData(k,ss1,ss2,shift_min,shift_max,
+            sub_samp1,sub_samp2,strain1min,strain1max,strain2min,strain2max);
 
         // Read data in
         int i = 12; // values -12 to 12 for now
@@ -97,18 +110,35 @@ public class RotateData {
         float[][] data = Utility.readL(n1,n2,
           System.getProperty("user.home") + 
             "/home/git/mem_warp/bench/data/eliasData"+i+".rsf@");
+
+        // compute time & spatial shifts
         float[][] timeShifts = rd.computeTimeShifts(reference,data);
+        float[][] warpedDataT = rd.warpDataT(data,timeShifts);
+
         float[][] spatialShifts = rd.computeSpatialShifts(reference,data);
         float[][] spatialShiftsT = transpose(spatialShifts);
+        float[][] warpedDataS = transpose(rd.warpDataS(data,spatialShifts));
 
-        timeShifts = mul((float)d1,timeShifts);
-        spatialShiftsT = mul((float)d2,spatialShiftsT);
+        // getting proper units for plotting
+        timeShifts = mul((float)(d1*1000.0),timeShifts);
+        spatialShiftsT = mul((float)(d2*1000.0),spatialShiftsT);
 
         // Plotting
         float cmin = -1.5e-5f; // min value on colorbar
         float cmax =  1.5e-5f; // max value on colorbar
-        Plot.plot(s1,s2,reference,"Data rotated 0 degrees","Amplitude",
-            cmin,cmax,false,false);
+        boolean paint = false; // paint to png?
+        boolean color = false;  // color or black&white?
+        boolean showColorbar = false;
+        Plot.plot(s1,s2,reference,"Data rotated 0 degrees","(colorbar label)",
+            cmin,cmax,color,paint,showColorbar);
+        Plot.plot(s1,s2,data,"Data rotated "+ i +" degrees","(colorbar label)",
+            cmin,cmax,color,paint,showColorbar);
+
+        // warping in time & space
+        Plot.plot(s1,s2,warpedDataT,"Time warped data","(colorbar label)",
+            cmin,cmax,color,paint,showColorbar);
+        Plot.plot(s1,s2,warpedDataS,"Space warped data","(colorbar label)",
+            cmin,cmax,color,paint,showColorbar);
 
         try {
           Thread.sleep(1000);
@@ -116,13 +146,11 @@ public class RotateData {
           System.out.println("Oops");
         }
 
-        Plot.plot(s1,s2,data,"Data rotated "+ i +" degrees","Amplitude",
-            cmin,cmax,false,false);
-
-        Plot.plot(s1,s2,spatialShiftsT,"Spatial shifts","Shifts (km)",
-            -5.0f,5.0f,true,false);
-        Plot.plot(s1,s2,timeShifts,"Time shifts","Shifts (s)",
-            -5.0f,5.0f,true,false);
+        // computed time & space shifts
+        Plot.plot(s1,s2,data,spatialShiftsT,"Spatial shifts","Shift (m)",
+            (float)shift_min,(float)shift_max,paint);
+        Plot.plot(s1,s2,data,timeShifts,"Time shifts","Shift (ms)",
+            (float)shift_min,(float)shift_max,paint);
       }
     });
   }
